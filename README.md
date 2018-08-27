@@ -1,6 +1,6 @@
 This container runs [openfortivpn](https://github.com/adrienverge/openfortivpn)
 and allows you to access your remote network through a simple tcp proxy
-provided by [haproxy](https://www.haproxy.org/).
+provided by [haproxy](https://www.haproxy.org/) listening on port 1111.
 
 You > Container:1111 > openfortivpn > REMOTE_ADDR
 
