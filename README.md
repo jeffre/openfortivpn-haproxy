@@ -25,8 +25,12 @@ docker run --rm -it \
     -p "1111:1111" \
     -e REMOTE_ADDR="10.0.0.1:22" \
     yoff/openfortivpn \
-    fortinet.example.com:4443 \
-    -u jeffre
+    fortinet.example.com:8443 \
+    --username=foo \
+    --password=bar \
+    --set-routes=0
+    --set-dns=0
+    --otp=123456
 ```
 To see all openfortivpn command-line options run `docker run --rm yoff/openfortivpn -h`
 
@@ -35,7 +39,7 @@ To see all openfortivpn command-line options run `docker run --rm yoff/openforti
 
 Contents of ./config:
 ```
-host = vpn-gateway
+host = fortinet.example.com
 port = 8443
 username = foo
 password = bar
