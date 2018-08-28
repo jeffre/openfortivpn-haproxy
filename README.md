@@ -1,22 +1,23 @@
-This container runs [openfortivpn](https://github.com/adrienverge/openfortivpn)
-and allows you to access your remote network through a simple tcp proxy
-provided by [haproxy](https://www.haproxy.org/) listening on port 1111.
+This container does two things. First, it runs
+[openfortivpn](https://github.com/adrienverge/openfortivpn) and connects to
+your remote network. Second, it routes a local port to a remote address using
+[haproxy](https://www.haproxy.org/) for a simple tcp proxy.
 
-You > Container:1111 > openfortivpn > REMOTE_ADDR
+`yoff/openfortivpn:1111` > haproxy > openfortivpn > `REMOTE_ADDR`
 
-# Build
-1. `git clone https://github.com/jeffre/docker-openfortivpn`
-2. `cd docker-openfortivpn`
-3. `docker build -t yoff/openfortivpn .`
+Thus, supposing `REMOTE_ADDR` was set to `10.0.0.100:3389` and that was the
+address of a window host inside a Fortinet firewall, one would be able to use
+rdp://localhost:1111 to get logged in.
 
-# Run
+
+# Running
 openfortivpn can be configured by passing arguments to the container, by using
 a config file, or both.
 
 haproxy can be configured by settings the `REMOTE_ADDR` environment variable to
 a single single destination "address:port".
 
-Example using openfortivpn arguments:
+### yoff/openfortivpn with command line arguments:
 ```
 docker run --rm -it \
     --device=/dev/ppp \
@@ -27,22 +28,21 @@ docker run --rm -it \
     fortinet.example.com:4443 \
     -u jeffre
 ```
-To see all openfortivpn command-line options run
-`docker run --rm yoff/openfortivpn -h`
-
-Example using openfortivpn config file:
+To see all openfortivpn command-line options run `docker run --rm yoff/openfortivpn -h`
 
 
+### yoff/openfortivpn with openfortivpn config file:
+
+Contents of ./config:
 ```
-$ cat ./config
 host = vpn-gateway
 port = 8443
 username = foo
 password = bar
 set-routes = 0
 set-dns = 0
-trusted-cert = e46d4aff08ba6914e64daa85bc6112a422fa7ce16631bff0b592a28556f993db
 ```
+
 ```
 $ docker run --rm -it \
     --device=/dev/ppp \
@@ -52,3 +52,9 @@ $ docker run --rm -it \
     -v "${pwd}/config:/etc/openfortivpn/config" \
     yoff/openfortivpn
 ```
+
+
+# Build
+1. `git clone https://github.com/jeffre/docker-openfortivpn`
+2. `cd docker-openfortivpn`
+3. `docker build -t yoff/openfortivpn .`
