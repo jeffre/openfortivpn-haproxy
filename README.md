@@ -10,7 +10,7 @@ address of a window host inside a Fortinet firewall, one would be able to use
 rdp://localhost:1111 to get logged in.
 
 
-# Running
+# Run
 openfortivpn can be configured by passing arguments to the container, by using
 a config file, or both.
 
@@ -19,7 +19,7 @@ a single single destination "address:port".
 
 ### yoff/openfortivpn with command line arguments:
 ```
-docker run --rm -it \
+$ docker run --rm -it \
     --device=/dev/ppp \
     --cap-add=NET_ADMIN \
     -p "1111:1111" \
