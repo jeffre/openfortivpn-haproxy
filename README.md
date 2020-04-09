@@ -1,4 +1,4 @@
-# openfortivpn proxy
+# openfortivpn-haproxy
 This docker image proxies a tcp port across a fortivpn gateway to remote 
 address:port (`REMOTE_ADDR`) using 
 [openfortivpn](https://github.com/adrienverge/openfortivpn) and 
@@ -24,7 +24,7 @@ docker run --rm -it \
     --cap-add=NET_ADMIN \
     -p "1111:1111" \
     -e REMOTE_ADDR="10.0.0.1:3389" \
-    yoff/openfortivpn \
+    jeffre/openfortivpn-haproxy \
     fortinet.example.com:8443 \
     --username=foo \
     --password=bar \
@@ -35,7 +35,7 @@ Once connected, one would be able to use rdp://localhost:1111 to get logged in .
 
 ### Get a list of openfortivpn options:
 ```
-$ docker run --rm yoff/openfortivpn -h
+$ docker run --rm jeffre/openfortivpn-haproxy -h
 ```
 
 ### Using a openfortivpn config file:
@@ -57,12 +57,12 @@ $ docker run --rm -it \
     -p "1111:1111" \
     -e REMOTE_ADDR="10.0.0.1:3389" \
     -v "${pwd}/config:/etc/openfortivpn/config" \
-    yoff/openfortivpn
+    jeffre/openfortivpn-haproxy
 ```
 
 
 ## Build
-1. `git clone https://github.com/jeffre/openfortivpn`
-2. `cd openfortivpn`
-3. `docker build -t yoff/openfortivpn .`
+1. `git clone https://github.com/jeffre/openfortivpn-haproxy`
+2. `cd openfortivpn-haproxy`
+3. `docker build -t jeffre/openfortivpn-haproxy .`
 
