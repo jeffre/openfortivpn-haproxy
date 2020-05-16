@@ -56,7 +56,7 @@ $ docker run --rm -it \
     --cap-add=NET_ADMIN \
     -p "1111:1111" \
     -e REMOTE_ADDR="10.0.0.1:3389" \
-    -v "${pwd}/config:/etc/openfortivpn/config" \
+    -v "$(pwd)/config:/etc/openfortivpn/config" \
     jeffre/openfortivpn-haproxy
 ```
 
