@@ -64,5 +64,5 @@ $ docker run --rm -it \
 ## Build
 1. `git clone https://github.com/jeffre/openfortivpn-haproxy`
 2. `cd openfortivpn-haproxy`
-3. `docker build -t jeffre/openfortivpn-haproxy .`
+3. `make`
 
