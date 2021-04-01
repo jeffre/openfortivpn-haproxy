@@ -4,6 +4,7 @@
 # Exit on any script failures
 set -e -o pipefail
 
+ls /dev/ppp || su-exec root mknod /dev/ppp c 108 0
 
 # Set default values
 LOCAL_PORT=${LOCAL_PORT:-"1111"}
