@@ -5,6 +5,10 @@
 set -e -o pipefail
 
 
+# Ensure the ppp device exists
+[[ -c /dev/ppp ]] || su-exec root mknod /dev/ppp c 108 0
+
+
 # Set default values
 LOCAL_PORT=${LOCAL_PORT:-"1111"}
 #REMOTE_ADDR=${REMOTE_ADDR:-"127.0.0.1:80"}

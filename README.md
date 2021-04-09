@@ -60,6 +60,18 @@ $ docker run --rm -it \
     jeffre/openfortivpn-haproxy
 ```
 
+### Running on MacOS
+Since /dev/ppp does not exist on MacOS, we will not attempt to bring it with 
+the `--device` flag. However, in order to create a ppp device inside the 
+container, we will instead need the `--privileged` flag:
+```
+docker run --rm -it \
+    --privileged \
+    -p "1111:1111" \
+    -e REMOTE_ADDR="10.0.0.1:3389" \
+    jeffre/openfortivpn-haproxy \
+    fortinet.example.com:8443
+```
 
 ## Build
 1. `git clone https://github.com/jeffre/openfortivpn-haproxy`
