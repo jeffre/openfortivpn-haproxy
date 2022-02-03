@@ -1,12 +1,12 @@
 # openfortivpn-haproxy
-This docker image proxies a tcp port across a fortivpn gateway to remote 
+This docker image proxies a tcp port across a Fortinet VPN to remote 
 address:port (`REMOTE_ADDR`) using 
 [openfortivpn](https://github.com/adrienverge/openfortivpn) and 
 [haproxy](https://www.haproxy.org/).
 
 
 ## Configuration
-haproxy configuration is limited to one envrionment variable (`REMOTE_ADDR`)
+haproxy configuration is limited to one environment variable (`REMOTE_ADDR`)
 which should contain a string of either IP:PORT or HOSTNAME:PORT (eg 
 10.0.0.1:3389). Note: internal to the docker container, haproxy binds to port
 1111.
