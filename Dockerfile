@@ -1,6 +1,6 @@
 FROM alpine as builder
 
-ARG OPENFORTIVPN_VERSION=v1.17.0
+ARG OPENFORTIVPN_VERSION=v1.17.1
 
 RUN apk update \
     && apk upgrade \
