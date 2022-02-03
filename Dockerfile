@@ -17,7 +17,7 @@ RUN apk update \
         make \
     && mkdir -p "/usr/src/openfortivpn" \
     && cd "/usr/src/openfortivpn" \
-    && curl -Ls https://github.com/adrienverge/openfortivpn/archive/${OPENFORTIVPN_VERSION}.tar.gz \
+    && curl -Ls "https://github.com/adrienverge/openfortivpn/archive/${OPENFORTIVPN_VERSION}.tar.gz" \
         | tar xz --strip-components 1 \
     && aclocal \
     && autoconf \
