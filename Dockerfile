@@ -2,9 +2,7 @@ FROM alpine as builder
 
 ARG OPENFORTIVPN_VERSION=v1.17.1
 
-RUN apk update \
-    && apk upgrade \
-    && apk add --no-cache \
+RUN apk add --no-cache \
         openssl-dev \
         ppp \
         ca-certificates \
@@ -27,6 +25,7 @@ RUN apk update \
     && make install \
     && apk del .build-deps
 
+
 FROM alpine
 
 RUN apk add --no-cache \
@@ -36,8 +35,7 @@ RUN apk add --no-cache \
         curl \
         su-exec \
         bash \
-        haproxy \
-    && rm -rf /var/cache/apk/*;
+        haproxy
 
 WORKDIR /
 
