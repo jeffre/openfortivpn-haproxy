@@ -5,11 +5,12 @@ address:port (`REMOTE_ADDR`) using
 [haproxy](https://www.haproxy.org/).
 
 
-## Configuration
-haproxy configuration is limited to one environment variable (`REMOTE_ADDR`)
-which should contain a string of either IP:PORT or HOSTNAME:PORT (eg 
-10.0.0.1:3389). Note: internal to the docker container, haproxy binds to port
-1111.
+## Create docker image
+Clone this repository and then build the image
+
+        git clone https://github.com/jeffre/openfortivpn-haproxy
+        docker build openfortivpn-haproxy -t "jeffre/openfortivpn-haproxy:latest"
+
 
 openfortivpn configuration can be provided as arguments to this image, a 
 mounted config file, or both.
@@ -72,9 +73,3 @@ docker run --rm -it \
     jeffre/openfortivpn-haproxy \
     fortinet.example.com:8443
 ```
-
-## Build
-1. `git clone https://github.com/jeffre/openfortivpn-haproxy`
-2. `cd openfortivpn-haproxy`
-3. `make`
-
