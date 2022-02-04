@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
 # Exit on any script failures
 set -e -o pipefail
 
 # Ensure the ppp device exists
-[[ -c /dev/ppp ]] || su-exec root mknod /dev/ppp c 108 0
+[ -c /dev/ppp ] || su-exec root mknod /dev/ppp c 108 0
 
 # Flush out any previous haproxy configurations
 cat <<- EOF >> /etc/haproxy/haproxy.cfg
@@ -53,18 +53,8 @@ for address in $(env | sed -n "s/^REMOTE_ADDR.*=//gp"); do
 done
 
 
-# Check if REMOTE_ADDR* was used. If not, print warning and skip running 
-# haproxy
-if ! env | grep -q "^REMOTE_ADDR.*=.\+:\d\+"; then
-  printf "REMOTE_ADDR* environment variable is not set. haproxy will not be started!\n" >&2
-else
-  # Run haproxy daemon
-  exec su-exec root haproxy -f /etc/haproxy/haproxy.cfg &
-fi
-
-
 # Force all args into openfortivpn
-if [[ "$1" = 'openfortivpn' ]]; then
+if [ "$1" = "openfortivpn" ]; then
   shift
 fi
 
