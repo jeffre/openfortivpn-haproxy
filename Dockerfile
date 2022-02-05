@@ -34,13 +34,12 @@ RUN apk add --no-cache \
         ppp \
         curl \
         su-exec \
-        bash \
-        haproxy
+        socat
 
 WORKDIR /
 
 COPY --from=builder /usr/bin/openfortivpn /usr/bin/openfortivpn
-COPY docker-entrypoint.sh /usr/bin/
+COPY ./docker-entrypoint.sh /usr/bin/
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["openfortivpn"]
