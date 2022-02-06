@@ -22,7 +22,11 @@ forwards=$(
   | cut -d= -f2-
 )
 
-# Iterate over all REMOTE_ADDR.* environment variables
+# Remove our old socat entries from ip-up
+sed '/^socat/d' -i /etc/ppp/ip-up
+
+# Iterate over all REMOTE_ADDR.* environment variables and create ppp ip-up 
+# scripts
 for forward in ${forwards}; do
 
   # Replace colons with spaces add them into a bash array
@@ -51,10 +55,16 @@ for forward in ${forwards}; do
     exit 1
   fi
 
-  # Background a socat processes for each port forward
-  set -x
-  socat ${PROTOCOL}-l:${LOCAL_PORT},fork,reuseaddr ${PROTOCOL}:${REMOTE_HOST}:${REMOTE_PORT} &
-  { set +x; } 2>/dev/null
+  # Use ppp's ip-up script to start the socat tunnels. In testing, this works 
+  # well with one exception being hostname resolution doesnt happen within the
+  # VPN. For this reason, using an ip instead of hostname in REMOTE_HOST is 
+  # preferred.
+  # For future attemps at solving this issue: dig/drill resolve properly after
+  # VPN is established whereas `getent hosts` and whatver ping/ssh use do not.
+  # It seems potentially related to musl and would be worth testing if this 
+  # docker image shoudl base of debian instead. 
+  echo "socat ${PROTOCOL}-l:${LOCAL_PORT},fork,reuseaddr ${PROTOCOL}:${REMOTE_HOST}:${REMOTE_PORT} &" \
+      >> "/etc/ppp/ip-up"
 
 done
 
