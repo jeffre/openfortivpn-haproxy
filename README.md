@@ -26,32 +26,31 @@ and
 
 ## Configure forwarded ports
 To configure forwarded ports, use environment variables with names that start
-with `PORT_FORWARD` (or `REMOTE_ADDR` for legacy purposes) and contain a 
-special string (outlined below). More than one port can be forwarded by
-using a unique variable name (`PORT_FORWARD1`, `PORT_FORWARD2`, etc).
-The variable should contain a string that is formatted like one of the 
-following:
- * REMOTE_HOST:REMOTE_PORT
- * LOCAL_PORT:REMOTE_HOST:REMOTE_PORT
- * PROTOCOL:LOCAL_PORT:REMOTE_HOST:REMOTE_PORT
+with `PORT_FORWARD` and contain a special string (outlined below). More than
+one port can be forwarded by using a unique variable name (`PORT_FORWARD1`,
+`PORT_FORWARD2`, etc). The variable should contain a string that is formatted
+like one of the following:
+ * `REMOTE_HOST`:`REMOTE_PORT`
+ * `LOCAL_PORT`:`REMOTE_HOST`:`REMOTE_PORT`
+ * `PROTOCOL`:`LOCAL_PORT`:`REMOTE_HOST`:`REMOTE_PORT`
 
 `REMOTE_HOST` is a public hostname or ip address (note that a current limitations prevents the hostname from being resolved within the VPN)  
 `REMOTE_PORT` an integer between 1-65535  
 `LOCAL_PORT` an integer between 1-65535. If omitted, port 1111 is used.  
-`PROTOCOL` is either tcp or udp. If omitted, tcp is used.
+`PROTOCOL` either tcp or udp. If omitted, tcp is used.
 
 
 ## Configure openfortivpn
 Openfortivpn configuration can be provided as command-line arguments to this
 image, as a mounted config file, or a combination of both. For details about
-openfortivpn configuration check out
+openfortivpn configuration run
 
     docker run --rm jeffre/openfortivpn-haproxy:latest -h
 
 
 # Examples
 
-### Expose a remote RDP server locally
+### Expose a remote RDP server
 ```
 docker run --rm -it \
     --device=/dev/ppp \
@@ -64,10 +63,10 @@ docker run --rm -it \
     --password=bar \
     --otp=123456
 ```
-Once connected rdp://127.0.0.1 will be reachable.
+Once connected, rdp://127.0.0.1 will be reachable.
 
 
-## Expose 2 remote services (RDP, SSH) locally
+## Expose 2 remote services (RDP, SSH)
 ```
 docker run --rm -it \
     --device=/dev/ppp \
@@ -86,7 +85,7 @@ Once connected, rdp://localhost:1111 and ssh://localhost:2222 will be
 reachable.
 
 
-## Use both an openfortivpn config file and pass a command-line argument:
+## Use both a config file and command-line parameters for openfortivpn:
 
 Contents of ./config:
 ```
