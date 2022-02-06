@@ -57,12 +57,11 @@ for forward in ${forwards}; do
 
   # Use ppp's ip-up script to start the socat tunnels. In testing, this works 
   # well with one exception being hostname resolution doesnt happen within the
-  # VPN. For this reason, using an ip instead of hostname in REMOTE_HOST is 
-  # preferred.
+  # VPN.
   # For future attemps at solving this issue: dig/drill resolve properly after
   # VPN is established whereas `getent hosts` and whatver ping/ssh use do not.
   # It seems potentially related to musl and would be worth testing if this 
-  # docker image shoudl base of debian instead. 
+  # docker image should base of debian instead of alpine.
   echo "socat ${PROTOCOL}-l:${LOCAL_PORT},fork,reuseaddr ${PROTOCOL}:${REMOTE_HOST}:${REMOTE_PORT} &" \
       >> "/etc/ppp/ip-up"
 
