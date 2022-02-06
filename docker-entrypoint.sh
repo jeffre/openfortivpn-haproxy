@@ -29,22 +29,22 @@ for forward in ${forwards}; do
   colons=$(echo "${forward}" | grep -o ':' | wc -l)
 
   if [ "${colons}" -eq "3" ]; then
-    PROTOCOL=$(echo "forward" | cut -d: -f1)
-    LOCAL_PORT=$(echo "forward" | cut -d: -f2)
-    REMOTE_HOST=$(echo "forward" | cut -d: -f3)
-    REMOTE_PORT=$(echo "forward" | cut -d: -f4)
+    PROTOCOL=$(echo "${forward}" | cut -d: -f1)
+    LOCAL_PORT=$(echo "${forward}" | cut -d: -f2)
+    REMOTE_HOST=$(echo "${forward}" | cut -d: -f3)
+    REMOTE_PORT=$(echo "${forward}" | cut -d: -f4)
 
   elif [ "${colons}" -eq "2" ]; then
     PROTOCOL="tcp"
-    LOCAL_PORT=$(echo "forward" | cut -d: -f1)
-    REMOTE_HOST=$(echo "forward" | cut -d: -f2)
-    REMOTE_PORT=$(echo "forward" | cut -d: -f3)
+    LOCAL_PORT=$(echo "${forward}" | cut -d: -f1)
+    REMOTE_HOST=$(echo "${forward}" | cut -d: -f2)
+    REMOTE_PORT=$(echo "${forward}" | cut -d: -f3)
 
   elif [ "${colons}" -eq "1" ]; then
     PROTOCOL="tcp"
     LOCAL_PORT="1111"
-    REMOTE_HOST=$(echo "forward" | cut -d: -f3)
-    REMOTE_PORT=$(echo "forward" | cut -d: -f4)
+    REMOTE_HOST=$(echo "${forward}" | cut -d: -f1)
+    REMOTE_PORT=$(echo "${forward}" | cut -d: -f2)
 
   else
     printf 'Unrecognized PORT_FORWARD(*) value: "%s"\n' "${address}" >&2
