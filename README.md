@@ -35,7 +35,7 @@ following:
  * LOCAL_PORT:REMOTE_HOST:REMOTE_PORT
  * PROTOCOL:LOCAL_PORT:REMOTE_HOST:REMOTE_PORT
 
-`REMOTE_HOST` is a hostname or ip address  
+`REMOTE_HOST` is a public hostname or ip address (note that a current limitations prevents the hostname from being resolved within the VPN)  
 `REMOTE_PORT` an integer between 1-65535  
 `LOCAL_PORT` an integer between 1-65535. If omitted, port 1111 is used.  
 `PROTOCOL` is either tcp or udp. If omitted, tcp is used.
