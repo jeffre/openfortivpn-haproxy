@@ -1,6 +1,6 @@
 FROM alpine as builder
 
-ARG OPENFORTIVPN_VERSION=v1.17.1
+ARG OPENFORTIVPN_VERSION=v1.17.2
 
 RUN apk add --no-cache \
         openssl-dev \
