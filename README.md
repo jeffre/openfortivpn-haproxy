@@ -85,7 +85,7 @@ Once connected, rdp://localhost:1111 and ssh://localhost:2222 will be
 reachable.
 
 
-## Use both a config file and command-line parameters for openfortivpn:
+## Use both a config file and command-line parameters for openfortivpn
 
 Contents of ./config:
 ```
