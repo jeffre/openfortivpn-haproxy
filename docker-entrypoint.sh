@@ -7,15 +7,15 @@ set -e -o pipefail
 [ -c /dev/ppp ] || su-exec root mknod /dev/ppp c 108 0
 
 # Generate regex search string
-r="^"                       # Required start of variable name
+r="^"                          # Required start of variable name
 r="${r}\(PORT_FORWARD\|REMOTE_ADDR\)[^=]*="  # Required variable name
 r="${r}\(\(tcp\|udp\):\)\?"    # Optional tcp or udp
 r="${r}\(\(\d\{1,5\}\):\)\?"   # Optional LOCAL_PORT
 r="${r}[a-zA-Z0-9.-]\+"        # Required REMOTE_HOST (ip or hostname)
 r="${r}:\d\{1,5\}"             # Required REMOTE_PORT
-r="${r}$"                      # Required end of variabzle contents
+r="${r}$"                      # Required end of variable contents
 
-# Create a space separated list of port forwards
+# Create a space separated list of forwarded ports
 forwards=$(
   env \
   | grep "${r}" \
