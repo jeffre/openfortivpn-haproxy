@@ -20,12 +20,15 @@ r="${r}[a-zA-Z0-9.-]\+"        # Required REMOTE_HOST (ip or hostname)
 r="${r}:\d\{1,5\}"             # Required REMOTE_PORT
 r="${r}$"                      # Required end of variable contents
 
-# Create a space separated list of forwarded ports
+# Create a space separated list of forwarded ports. Pause immediate script
+# termination on non-zero exits to permit use without port forwarding.
+set +e
 forwards=$(
   env \
   | grep "${r}" \
   | cut -d= -f2-
 )
+set -e
 
 # Remove our old socat entries from ip-up
 sed '/^socat/d' -i /etc/ppp/ip-up
