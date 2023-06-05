@@ -3,6 +3,11 @@
 # Exit on any script failures
 set -e -o pipefail
 
+if [ "$ENTRYDEBUG" == "TRUE" ]; then
+  # Print shell input lines as they are read
+  set -v
+fi
+
 # Ensure the ppp device exists
 [ -c /dev/ppp ] || su-exec root mknod /dev/ppp c 108 0
 
@@ -66,7 +71,6 @@ for forward in ${forwards}; do
       >> "/etc/ppp/ip-up"
 
 done
-
 
 # Force all args into openfortivpn
 if [ "$1" = "openfortivpn" ]; then
