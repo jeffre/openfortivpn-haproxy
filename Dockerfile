@@ -2,6 +2,7 @@ FROM alpine as builder
 
 ARG OPENFORTIVPN_VERSION=v1.20.1
 
+# Build openfortivpn binary
 RUN apk add --no-cache \
         openssl-dev \
         ppp \
@@ -26,6 +27,7 @@ RUN apk add --no-cache \
     && apk del .build-deps
 
 
+# Build final image
 FROM alpine
 
 RUN apk add --no-cache \
@@ -35,8 +37,6 @@ RUN apk add --no-cache \
         curl \
         su-exec \
         socat
-
-WORKDIR /
 
 COPY --from=builder /usr/bin/openfortivpn /usr/bin/openfortivpn
 COPY ./docker-entrypoint.sh /usr/bin/
