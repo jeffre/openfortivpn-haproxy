@@ -1,6 +1,6 @@
 FROM alpine as builder
 
-ARG OPENFORTIVPN_VERSION=v1.20.5
+ARG OPENFORTIVPN_VERSION=v1.21.0
 
 # Build openfortivpn binary
 RUN apk add --no-cache \
