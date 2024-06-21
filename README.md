@@ -1,5 +1,5 @@
 # openfortivpn-haproxy
-This docker image proxies tcp ports across a Fortinet VPN to remote host using
+This docker image proxies traffic across a Fortinet VPN to remote host using
 [openfortivpn](https://github.com/adrienverge/openfortivpn)
 and ~~[haproxy](https://www.haproxy.org/)~~ 
 [socat](http://www.dest-unreach.org/socat/).
@@ -24,11 +24,9 @@ and ~~[haproxy](https://www.haproxy.org/)~~
 
 # Deploy docker container
 
-## Configure forwarded ports
-To configure forwarded ports, use environment variables with names that start
-with `PORT_FORWARD` and contain a special string (outlined below). More than
-one port can be forwarded by using a unique variable name (`PORT_FORWARD1`,
-`PORT_FORWARD2`, etc). The variable should contain a string that is formatted
+To configure forwarded ports use environment variables with names that *start*
+with `PORT_FORWARD` (eg `PORT_FORWARD_SSH`, `PORT_FORWARD_RDP`). Each must
+contain a special string obeying one of the following syntaxes:
 like one of the following:
  * `REMOTE_HOST`:`REMOTE_PORT`
  * `LOCAL_PORT`:`REMOTE_HOST`:`REMOTE_PORT`
@@ -50,8 +48,7 @@ openfortivpn configuration run
 
 # Examples
 
-### Expose a remote RDP server
-```
+### Expose a remote RDP service
 docker run --rm -it \
     --device=/dev/ppp \
     --cap-add=NET_ADMIN \
@@ -63,7 +60,7 @@ docker run --rm -it \
     --password=bar \
     --otp=123456
 ```
-Once connected, rdp://127.0.0.1 will be reachable.
+Once connected, rdp://127.0.0.1 will be accessible.
 
 
 ## Expose 2 remote services (RDP, SSH)
@@ -84,6 +81,8 @@ docker run --rm -it \
 Once connected, rdp://localhost:1111 and ssh://localhost:2222 will be 
 reachable.
 
+Once connected, rdp://localhost:1111 and ssh://localhost:2222 will both be
+accessible.
 
 ## Use both a config file and command-line parameters for openfortivpn
 
