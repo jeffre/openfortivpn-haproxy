@@ -1,54 +1,67 @@
 # openfortivpn-haproxy
+
 This docker image proxies traffic across a Fortinet VPN to remote host using
 [openfortivpn](https://github.com/adrienverge/openfortivpn)
 and ~~[haproxy](https://www.haproxy.org/)~~ 
 [socat](http://www.dest-unreach.org/socat/).
 
+## Create docker image
 
-# Create docker image
 1. Clone this repository
 
-        git clone https://github.com/jeffre/openfortivpn-haproxy
+    ```sh
+    git clone https://github.com/jeffre/openfortivpn-haproxy
+    ```
 
 2. Build the image
 
-        docker build ./openfortivpn-haproxy \
-            -t "jeffre/openfortivpn-haproxy:latest"
+    ```sh
+    docker build ./openfortivpn-haproxy \
+        -t "jeffre/openfortivpn-haproxy:latest"
+    ```
 
     Alternatively, you may specify the openfortivpn version using `--build-arg`
 
-        docker build ./openfortivpn-haproxy \
-            -t "jeffre/openfortivpn-haproxy:v1.17.1" \
-            --build-arg OPENFORTIVPN_VERSION=v1.17.1
+    ```sh
+    docker build ./openfortivpn-haproxy \
+        -t "jeffre/openfortivpn-haproxy:v1.17.1" \
+        --build-arg OPENFORTIVPN_VERSION=v1.17.1
+    ```
 
+## Deploy docker container
 
-# Deploy docker container
+### Configure forwarded ports
 
 To configure forwarded ports use environment variables with names that *start*
 with `PORT_FORWARD` (eg `PORT_FORWARD_SSH`, `PORT_FORWARD_RDP`). Each must
 contain a special string obeying one of the following syntaxes:
-like one of the following:
- * `REMOTE_HOST`:`REMOTE_PORT`
- * `LOCAL_PORT`:`REMOTE_HOST`:`REMOTE_PORT`
- * `PROTOCOL`:`LOCAL_PORT`:`REMOTE_HOST`:`REMOTE_PORT`
 
-`REMOTE_HOST` is a public hostname or ip address (note that a current limitations prevents the hostname from being resolved within the VPN)  
-`REMOTE_PORT` an integer between 1-65535  
-`LOCAL_PORT` an integer between 1-65535. If omitted, port 1111 is used.  
-`PROTOCOL` either tcp or udp. If omitted, tcp is used.
+* `REMOTE_HOST`:`REMOTE_PORT`
+* `LOCAL_PORT`:`REMOTE_HOST`:`REMOTE_PORT`
+* `PROTOCOL`:`LOCAL_PORT`:`REMOTE_HOST`:`REMOTE_PORT`
 
+| Variable      | Definition                   |
+|---------------|------------------------------|
+| `REMOTE_HOST` | Public hostname or ip address. Note: The hostname's dns will be resolved externally from the VPN. |
+| `REMOTE_PORT` | integer between 1-65535. |
+| `LOCAL_PORT`  | integer between 1-65535. If omitted, port 1111 is used. |
+| `PROTOCOL`    | Either tcp (default) or udp |
 
-## Configure openfortivpn
+### Configure openfortivpn
+
 Openfortivpn configuration can be provided as command-line arguments to this
 image, as a mounted config file, or a combination of both. For details about
 openfortivpn configuration run
 
-    docker run --rm jeffre/openfortivpn-haproxy:latest -h
+```sh
+docker run --rm jeffre/openfortivpn-haproxy -h
+```
 
-
-# Examples
+## Examples
 
 ### Expose a remote RDP service
+
+```sh
 docker run --rm -it \
     --device=/dev/ppp \
     --cap-add=NET_ADMIN \
@@ -60,11 +73,12 @@ docker run --rm -it \
     --password=bar \
     --otp=123456
 ```
+
 Once connected, rdp://127.0.0.1 will be accessible.
 
+### Expose 2 remote services (RDP, SSH)
 
-## Expose 2 remote services (RDP, SSH)
-```
+```sh
 docker run --rm -it \
     --device=/dev/ppp \
     --cap-add=NET_ADMIN \
@@ -78,23 +92,22 @@ docker run --rm -it \
     --password=bar \
     --otp=123456
 ```
-Once connected, rdp://localhost:1111 and ssh://localhost:2222 will be 
-reachable.
 
 Once connected, rdp://localhost:1111 and ssh://localhost:2222 will both be
 accessible.
 
-## Use both a config file and command-line parameters for openfortivpn
+### Use both a config file and command-line parameters for openfortivpn
 
 Contents of ./config:
-```
+
+```txt
 host = fortinet.example.com
 port = 8443
 username = foo
 password = bar
 ```
 
-```
+```sh
 docker run --rm -it \
     --device=/dev/ppp \
     --cap-add=NET_ADMIN \
@@ -105,12 +118,13 @@ docker run --rm -it \
     --otp=123456
 ```
 
+## Running on MacOS
 
-# Running on MacOS
 Since /dev/ppp does not exist on MacOS, we will not attempt to bring it in with
-the `--device` flag. However, in order to create a ppp device inside the 
+the `--device` flag. However, in order to create a ppp device inside the
 container, we will instead need the `--privileged` flag:
-```
+
+```sh
 docker run --rm -it \
     --privileged \
     -p "1111:1111" \
