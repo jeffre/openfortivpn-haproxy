@@ -51,11 +51,18 @@ contain a special string obeying one of the following syntaxes:
 
 Openfortivpn configuration can be provided as command-line arguments to this
 image, as a mounted config file, or a combination of both. For details about
-openfortivpn configuration run
+openfortivpn configuration run:
 
 ```sh
 docker run --rm jeffre/openfortivpn-haproxy -h
 ```
+
+Some common command-line arguments for openfortivpn are:
+
+* `--username=<user>`
+* `--password=<password>` although better to omit this and you'll be prompted for it
+* `--otp=<opt>` although also better to omit this and you'll be prompted for it
+* `--realm=<realm>` if your server requires a realm, as seen as a path on the server URL
 
 ## Examples
 
@@ -70,11 +77,10 @@ docker run --rm -it \
     jeffre/openfortivpn-haproxy:latest \
     fortinet.example.com:8443 \
     --username=foo \
-    --password=bar \
-    --otp=123456
+    --password=bar
 ```
 
-Once connected, rdp://127.0.0.1 will be accessible.
+Once connected, `rdp://127.0.0.1` will be accessible.
 
 ### Expose 2 remote services (RDP, SSH)
 
@@ -89,8 +95,7 @@ docker run --rm -it \
     jeffre/openfortivpn-haproxy:latest \
     fortinet.example.com:8443 \
     --username=foo \
-    --password=bar \
-    --otp=123456
+    --password=bar
 ```
 
 Once connected, rdp://localhost:1111 and ssh://localhost:2222 will both be
@@ -114,13 +119,12 @@ docker run --rm -it \
     -p "1111:1111" \
     -e PORT_FORWARD="1111:10.0.0.1:3389" \
     -v "$(pwd)/config:/etc/openfortivpn/config" \
-    jeffre/openfortivpn-haproxy:latest \
-    --otp=123456
+    jeffre/openfortivpn-haproxy:latest
 ```
 
-## Running on MacOS
+## Running on macOS
 
-Since /dev/ppp does not exist on MacOS, we will not attempt to bring it in with
+Since `/dev/ppp` does not exist on macOS, we will not attempt to bring it in with
 the `--device` flag. However, in order to create a ppp device inside the
 container, we will instead need the `--privileged` flag:
 
@@ -128,7 +132,8 @@ container, we will instead need the `--privileged` flag:
 docker run --rm -it \
     --privileged \
     -p "1111:1111" \
-    -e PORT_FORWARD="3389:10.0.0.1:3389" \
+    -e PORT_FORWARD="1111:10.0.0.1:3389" \
     jeffre/openfortivpn-haproxy:latest \
-    fortinet.example.com:8443
+    fortinet.example.com:8443 \
+    --username=foo
 ```
