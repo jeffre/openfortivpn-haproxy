@@ -1,6 +1,6 @@
-FROM alpine:3.19 as builder
+FROM alpine:3.21 AS builder
 
-ARG OPENFORTIVPN_VERSION=v1.22.1
+ARG OPENFORTIVPN_VERSION=v1.23.1
 
 # Build openfortivpn binary
 RUN apk update \
@@ -29,7 +29,7 @@ RUN apk update \
 
 
 # Build final image
-FROM alpine:3.19
+FROM alpine:3.21
 
 RUN apk add --no-cache \
         ca-certificates \
