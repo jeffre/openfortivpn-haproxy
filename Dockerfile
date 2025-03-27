@@ -1,6 +1,6 @@
 FROM alpine:3.21 AS builder
 
-ARG OPENFORTIVPN_VERSION=v1.22.1
+ARG OPENFORTIVPN_VERSION=v1.23.1
 
 # Build openfortivpn binary
 RUN apk update \
