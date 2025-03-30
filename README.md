@@ -98,7 +98,7 @@ docker run --rm -it \
     --password=bar
 ```
 
-Once connected, `rdp://localhost:1111` and `ssh://localhost:2222` will both be
+Once connected, `rdp://localhost:3389` and `ssh://localhost:2222` will both be
 accessible.
 
 ### Use both a config file and command-line parameters for openfortivpn
