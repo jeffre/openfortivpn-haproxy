@@ -8,76 +8,75 @@ if [ "$ENTRYDEBUG" == "TRUE" ]; then
   set -v
 fi
 
+SOCAT_ARGS="${SOCAT_ARGS:-"-d"}"
+
 # Ensure the ppp device exists
 [ -c /dev/ppp ] || su-exec root mknod /dev/ppp c 108 0
 
-# Generate regex search string
-r="^"                          # Required start of variable name
-r="${r}\(PORT_FORWARD\|REMOTE_ADDR\)[^=]*="  # Required variable name
-r="${r}\(\(tcp\|udp\):\)\?"    # Optional tcp or udp
-r="${r}\(\(\d\{1,5\}\):\)\?"   # Optional LOCAL_PORT
-r="${r}[a-zA-Z0-9.-]\+"        # Required REMOTE_HOST (ip or hostname)
-r="${r}:\d\{1,5\}"             # Required REMOTE_PORT
-r="${r}$"                      # Required end of variable contents
+# Reads environment variables and prints the values that match a special regex
+# string
+get_port_forwards_raw() {
+  # Generate regex search string
+  local r="^"                              # Required start of variable name
+  r="${r}(PORT_FORWARD|REMOTE_ADDR)[^=]*=" # Required variable name
+  r="${r}((tcp|udp):)?"                    # Optional tcp or udp
+  r="${r}(([0-9]{1,5}):)?"                 # Optional LOCAL_PORT
+  r="${r}[a-zA-Z0-9.-]+"                   # Required REMOTE_HOST (ip or hostname)
+  r="${r}:[0-9]{1,5}"                      # Required REMOTE_PORT
+  r="${r}$"                                # Required end of variable contents
 
-# Create a space separated list of forwarded ports. Pause immediate script
-# termination on non-zero exits to permit use without port forwarding.
-set +e
-forwards=$(
-  env \
-  | grep "${r}" \
-  | cut -d= -f2-
-)
-set -e
+  env | awk -F= -v pattern="$r" '$0 ~ pattern { print $2 }'
+}
 
-# Remove our old socat entries from ip-up
-sed '/^socat/d' -i /etc/ppp/ip-up
+# Outputs 4 fields related to port forwarding:
+#   1. Protocol
+#   2. Local port
+#   3. Remote host
+#   4. Remote port
+get_port_forwards_sane() {
+  get_port_forwards_raw | awk -F: '{
+    if (NF == 4) {
+      print $1" "$2" "$3" "$4
+    } else if (NF == 3) {
+      print "TCP "$1" "$2" "$3
+    } else if (NF == 2) {
+      print "TCP 1111 "$1" "$2
+    }
+  }'
+}
 
-# Iterate over all REMOTE_ADDR.* environment variables and create ppp ip-up 
-# scripts
-for forward in ${forwards}; do
+# Starts a port-forwarding executable in the background
+daemonize_port_forward() {
+  local protocol="$1"
+  local local_port="$2"
+  local remote_host="$3"
+  local remote_port="$4"
 
-  # Replace colons with spaces add them into a bash array
-  colons=$(echo "${forward}" | grep -o ':' | wc -l)
+  socat $SOCAT_ARGS \
+    "${protocol}-LISTEN:${local_port},fork,reuseaddr" \
+    "${protocol}:"${remote_host}":"${remote_port} &
+}
 
-  if [ "${colons}" -eq "3" ]; then
-    PROTOCOL=$(echo "${forward}" | cut -d: -f1)
-    LOCAL_PORT=$(echo "${forward}" | cut -d: -f2)
-    REMOTE_HOST=$(echo "${forward}" | cut -d: -f3)
-    REMOTE_PORT=$(echo "${forward}" | cut -d: -f4)
+# Start all port-forwarding services
+start_port_forwarding() {
+  get_port_forwards_sane | while IFS= read -r line; do
+    # Set IFS to default whitespace characters. Then split the 'line' variable
+    # into positional parameters ($1, $2, $3, $4). Finally, restore the original
+    # IFS value
+    old_ifs="$IFS"
+    IFS=$' \t\n'
+    set -- $line
+    IFS="$old_ifs"
 
-  elif [ "${colons}" -eq "2" ]; then
-    PROTOCOL="tcp"
-    LOCAL_PORT=$(echo "${forward}" | cut -d: -f1)
-    REMOTE_HOST=$(echo "${forward}" | cut -d: -f2)
-    REMOTE_PORT=$(echo "${forward}" | cut -d: -f3)
+    daemonize_port_forward "$1" "$2" "$3" "$4"
+  done
+}
 
-  elif [ "${colons}" -eq "1" ]; then
-    PROTOCOL="tcp"
-    LOCAL_PORT="1111"
-    REMOTE_HOST=$(echo "${forward}" | cut -d: -f1)
-    REMOTE_PORT=$(echo "${forward}" | cut -d: -f2)
-
-  else
-    printf 'Unrecognized PORT_FORWARD(*) value: "%s"\n' "${address}" >&2
-    exit 1
-  fi
-
-  # Use ppp's ip-up script to start the socat tunnels. In testing, this works 
-  # well with one exception being hostname resolution doesnt happen within the
-  # VPN.
-  # For future attemps at solving this issue: dig/drill resolve properly after
-  # VPN is established whereas `getent hosts` and whatver ping/ssh use do not.
-  # It seems potentially related to musl and would be worth testing if this 
-  # docker image should base of debian instead of alpine.
-  echo "socat ${PROTOCOL}-l:${LOCAL_PORT},fork,reuseaddr ${PROTOCOL}:${REMOTE_HOST}:${REMOTE_PORT} &" \
-      >> "/etc/ppp/ip-up"
-
-done
-
-# Force all args into openfortivpn
+# Remove possible stutter
 if [ "$1" = "openfortivpn" ]; then
   shift
 fi
+
+start_port_forwarding
 
 exec openfortivpn "$@"
